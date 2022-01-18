@@ -1,0 +1,7 @@
+bank/
+samples/
+sequences/
+bank_sets
+sequences.bin
+sound_data.*
+*.z64

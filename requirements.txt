@@ -1,0 +1,5 @@
+appdirs==1.4.4
+fs==2.4.14
+modulegraph==0.19.2
+pytz==2021.3
+six==1.16.0
