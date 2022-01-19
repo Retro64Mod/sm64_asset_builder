@@ -9,6 +9,7 @@ import re
 import struct
 import sys
 from fs import open_fs
+import fs as _fs
 
 TYPE_CTL = 1
 TYPE_TBL = 2
@@ -526,7 +527,7 @@ def write_aiff(entry, filename):
     #    write_aifc(entry, temp)
     #    temp.flush()
     #    temp.close()
-    #    aifc_decode = os.path.join(os.path.dirname(__file__), "aifc_decode")
+    #    aifc_decode = _fs.path.join(os.path.dirname(__file__), "aifc_decode")
     #    subprocess.run([aifc_decode, temp.name, filename], check=True)
     #finally:
     #    temp.close()
@@ -697,7 +698,7 @@ def main(fs=None):
 
     # Generate aiff files
     for sample_bank in sample_banks:
-        dir = os.path.join(samples_out_dir, sample_bank.name)
+        dir = _fs.path.join(samples_out_dir, sample_bank.name)
         FS.makedirs(dir)
 
         offsets = sorted(set(sample_bank.entries.keys()))
@@ -719,13 +720,13 @@ def main(fs=None):
             if next_offset != offsets[-1]:
                 # (The last chunk follows a more complex garbage pattern)
                 assert all(x == 0 for x in garbage)
-            filename = os.path.join(dir, entry.name + ".aiff")
+            filename = _fs.path.join(dir, entry.name + ".aiff")
             write_aiff(entry, filename)
 
     # Generate sound bank .json files
     FS.makedirs(banks_out_dir)
     for bank_index, bank in enumerate(banks):
-        filename = os.path.join(banks_out_dir, bank.name + ".json")
+        filename = _fs.path.join(banks_out_dir, bank.name + ".json")
         with FS.open(filename, "w") as out:
 
             def sound_to_json(sound):
