@@ -7,6 +7,7 @@ import struct
 import subprocess
 import sys
 from fs import open_fs
+import fs as _fs
 
 TYPE_CTL = 1
 TYPE_TBL = 2
@@ -995,12 +996,12 @@ def main(fs=None):
 
     sample_bank_names = sorted(FS.listdir(sample_bank_dir))
     for name in sample_bank_names:
-        dir = os.path.join(sample_bank_dir, name)
+        dir = _fs.path.join(sample_bank_dir, name)
         if not FS.isdir(dir):
             continue
         entries = []
         for f in sorted(FS.listdir(dir)):
-            fname = os.path.join(dir, f)
+            fname = _fs.path.join(dir, f)
             if not f.endswith(".aifc"):
                 continue
             try:
@@ -1016,7 +1017,7 @@ def main(fs=None):
 
     bank_names = sorted(FS.listdir(sound_bank_dir))
     for f in bank_names:
-        fname = os.path.join(sound_bank_dir, f)
+        fname = _fs.path.join(sound_bank_dir, f)
         if not f.endswith(".json"):
             continue
 

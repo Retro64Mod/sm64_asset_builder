@@ -1,5 +1,6 @@
 import os
 from fs import open_fs
+import fs as _fs
 
 FS = None
 rom_file = open("baserom.us.z64", "rb")
@@ -16,7 +17,7 @@ def main(fs=None):
         fs.makedirs("sequences")
 
     def extract_file(filename,offset,length):
-        with fs.open(os.path.join("sequences",filename), "wb") as file:
+        with fs.open(_fs.path.join("sequences",filename), "wb") as file:
             file.write(read_at(offset,length))
 
     extract_file("00_sound_player.m64",8063360,13452)
