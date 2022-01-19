@@ -8,9 +8,12 @@ import os
 import re
 import struct
 import sys
+from fs import open_fs
 
 TYPE_CTL = 1
 TYPE_TBL = 2
+
+FS = None
 
 
 class AifcEntry:
@@ -518,7 +521,7 @@ def write_aifc(entry, out):
 
 def write_aiff(entry, filename):
     #temp = tempfile.NamedTemporaryFile(suffix=".aifc", delete=False)
-    write_aifc(entry,open(filename[:-1]+"c", "wb")) # xxx.aiff -> xxx.aifc
+    write_aifc(entry, FS.open(filename[:-1]+"c", "wb")) # xxx.aiff -> xxx.aifc
     #try:
     #    write_aifc(entry, temp)
     #    temp.flush()
@@ -575,7 +578,12 @@ def inst_ifdef_json(bank_index, inst_index):
     return None
 
 
-def main():
+def main(fs=None):
+    global FS
+    if fs is None:
+        FS = open_fs('osfs://.')
+    else:
+        FS = fs
     args = []
     need_help = False
     only_samples = False
@@ -680,9 +688,9 @@ def main():
                 index += 1
                 if index in index_to_filename:
                     filename = index_to_filename[index]
-                    dir = os.path.dirname(filename)
+                    dir = FS.path.dirname(filename)
                     if dir not in created_dirs:
-                        os.makedirs(dir, exist_ok=True)
+                        FS.makedirs(dir)
                         created_dirs.add(dir)
                     write_aiff(entry, filename)
         return
@@ -690,7 +698,7 @@ def main():
     # Generate aiff files
     for sample_bank in sample_banks:
         dir = os.path.join(samples_out_dir, sample_bank.name)
-        os.makedirs(dir, exist_ok=True)
+        FS.makedirs(dir)
 
         offsets = sorted(set(sample_bank.entries.keys()))
         # print(sample_bank.name, len(offsets), 'entries')
@@ -715,10 +723,10 @@ def main():
             write_aiff(entry, filename)
 
     # Generate sound bank .json files
-    os.makedirs(banks_out_dir, exist_ok=True)
+    FS.makedirs(banks_out_dir)
     for bank_index, bank in enumerate(banks):
         filename = os.path.join(banks_out_dir, bank.name + ".json")
-        with open(filename, "w") as out:
+        with FS.open(filename, "w") as out:
 
             def sound_to_json(sound):
                 entry = bank.samples[sound.sample_addr]
