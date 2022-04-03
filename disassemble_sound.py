@@ -8,13 +8,9 @@ import os
 import re
 import struct
 import sys
-from fs import open_fs
-import fs as _fs
 
 TYPE_CTL = 1
 TYPE_TBL = 2
-
-FS = None
 
 
 class AifcEntry:
@@ -522,12 +518,12 @@ def write_aifc(entry, out):
 
 def write_aiff(entry, filename):
     #temp = tempfile.NamedTemporaryFile(suffix=".aifc", delete=False)
-    write_aifc(entry, FS.open(filename[:-1]+"c", "wb")) # xxx.aiff -> xxx.aifc
+    write_aifc(entry, open(filename[:-1]+"c", "wb")) # xxx.aiff -> xxx.aifc
     #try:
     #    write_aifc(entry, temp)
     #    temp.flush()
     #    temp.close()
-    #    aifc_decode = _fs.path.join(os.path.dirname(__file__), "aifc_decode")
+    #    aifc_decode = os.path.join(os.path.dirname(__file__), "aifc_decode")
     #    subprocess.run([aifc_decode, temp.name, filename], check=True)
     #finally:
     #    temp.close()
@@ -579,12 +575,7 @@ def inst_ifdef_json(bank_index, inst_index):
     return None
 
 
-def main(fs=None):
-    global FS
-    if fs is None:
-        FS = open_fs('osfs://.')
-    else:
-        FS = fs
+def main():
     args = []
     need_help = False
     only_samples = False
@@ -689,17 +680,17 @@ def main(fs=None):
                 index += 1
                 if index in index_to_filename:
                     filename = index_to_filename[index]
-                    dir = FS.path.dirname(filename)
+                    dir = path.dirname(filename)
                     if dir not in created_dirs:
-                        FS.makedirs(dir)
+                        os.makedirs(dir)
                         created_dirs.add(dir)
                     write_aiff(entry, filename)
         return
 
     # Generate aiff files
     for sample_bank in sample_banks:
-        dir = _fs.path.join(samples_out_dir, sample_bank.name)
-        FS.makedirs(dir)
+        dir = os.path.join(samples_out_dir, sample_bank.name)
+        os.makedirs(dir)
 
         offsets = sorted(set(sample_bank.entries.keys()))
         # print(sample_bank.name, len(offsets), 'entries')
@@ -720,14 +711,14 @@ def main(fs=None):
             if next_offset != offsets[-1]:
                 # (The last chunk follows a more complex garbage pattern)
                 assert all(x == 0 for x in garbage)
-            filename = _fs.path.join(dir, entry.name + ".aiff")
+            filename = os.path.join(dir, entry.name + ".aiff")
             write_aiff(entry, filename)
 
     # Generate sound bank .json files
-    FS.makedirs(banks_out_dir)
+    os.makedirs(banks_out_dir)
     for bank_index, bank in enumerate(banks):
-        filename = _fs.path.join(banks_out_dir, bank.name + ".json")
-        with FS.open(filename, "w") as out:
+        filename = os.path.join(banks_out_dir, bank.name + ".json")
+        with open(filename, "w") as out:
 
             def sound_to_json(sound):
                 entry = bank.samples[sound.sample_addr]

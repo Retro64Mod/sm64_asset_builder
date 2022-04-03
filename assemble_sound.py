@@ -6,8 +6,6 @@ import re
 import struct
 import subprocess
 import sys
-from fs import open_fs
-import fs as _fs
 
 TYPE_CTL = 1
 TYPE_TBL = 2
@@ -722,9 +720,9 @@ def serialize_seqfile(
             ser.align(WORD_BYTES)
 
         if out_header_filename:
-            with FS.open(out_header_filename, "wb") as f:
+            with open(out_header_filename, "wb") as f:
                 f.write(ser.finish())
-        with FS.open(out_filename, "wb") as f:
+        with open(out_filename, "wb") as f:
             f.write(data)
 
     else:
@@ -742,7 +740,7 @@ def serialize_seqfile(
         for index in entry_list:
             table.append(pack("P", entry_offsets[index] + data_start))
             table.append(pack("IX", entry_lens[index]))
-        with FS.open(out_filename, "wb") as f:
+        with open(out_filename, "wb") as f:
             f.write(ser.finish())
 
 
@@ -786,7 +784,7 @@ def write_sequences(
     is_shindou,
 ):
     bank_names = sorted(
-        [os.path.splitext(os.path.basename(x))[0] for x in FS.listdir(sound_bank_dir)]
+        [os.path.splitext(os.path.basename(x))[0] for x in os.listdir(sound_bank_dir)]
     )
 
     try:
@@ -850,7 +848,7 @@ def write_sequences(
         if json.get(name) is None:
             return
         ser.reset_garbage_pos()
-        with FS.open(name_to_fname[name], "rb") as f:
+        with open(name_to_fname[name], "rb") as f:
             ser.add(f.read())
         if is_shindou and name.startswith("17"):
             ser.align(16)
@@ -868,7 +866,7 @@ def write_sequences(
         extra_padding=False,
     )
 
-    with FS.open(out_bank_sets, "wb") as f:
+    with open(out_bank_sets, "wb") as f:
         ser = ReserveSerializer()
         table = ser.reserve(len(ind_to_name) * 2)
         for name in ind_to_name:
@@ -881,12 +879,7 @@ def write_sequences(
         f.write(ser.finish())
 
 
-def main(fs=None):
-    global FS
-    if fs is None:
-        FS = open_fs('osfs://.')
-    else:
-        FS = fs
+def main():
     global STACK_TRACES
     global DUMP_INDIVIDUAL_BINS
     global ENDIAN_MARKER
@@ -994,18 +987,18 @@ def main(fs=None):
     sample_banks = []
     name_to_sample_bank = {}
 
-    sample_bank_names = sorted(FS.listdir(sample_bank_dir))
+    sample_bank_names = sorted(os.listdir(sample_bank_dir))
     for name in sample_bank_names:
-        dir = _fs.path.join(sample_bank_dir, name)
-        if not FS.isdir(dir):
+        dir = os.path.join(sample_bank_dir, name)
+        if not os.path.isdir(dir):
             continue
         entries = []
-        for f in sorted(FS.listdir(dir)):
-            fname = _fs.path.join(dir, f)
+        for f in sorted(os.listdir(dir)):
+            fname = os.path.join(dir, f)
             if not f.endswith(".aifc"):
                 continue
             try:
-                with FS.open(fname, "rb") as inf:
+                with open(fname, "rb") as inf:
                     data = inf.read()
                     entries.append(parse_aifc(data, f[:-5], fname))
             except Exception as e:
@@ -1015,9 +1008,9 @@ def main(fs=None):
             sample_banks.append(sample_bank)
             name_to_sample_bank[name] = sample_bank
 
-    bank_names = sorted(FS.listdir(sound_bank_dir))
+    bank_names = sorted(os.listdir(sound_bank_dir))
     for f in bank_names:
-        fname = _fs.path.join(sound_bank_dir, f)
+        fname = os.path.join(sound_bank_dir, f)
         if not f.endswith(".json"):
             continue
 
@@ -1029,7 +1022,7 @@ def main(fs=None):
                     check=True,
                 ).stdout.decode()
             else:
-                with FS.open(fname, "r") as inf:
+                with open(fname, "r") as inf:
                     data = inf.read()
                 data = strip_comments(data)
             bank_json = orderedJsonDecoder.decode(data)
@@ -1074,9 +1067,9 @@ def main(fs=None):
 
     if DUMP_INDIVIDUAL_BINS:
         # Debug logic, may simplify diffing
-        FS.makedirs("ctl/")
+        makedirs("ctl/")
         for b in banks:
-            with FS.open("ctl/" + b.name + ".bin", "wb") as f:
+            with open("ctl/" + b.name + ".bin", "wb") as f:
                 ser = GarbageSerializer()
                 serialize_ctl(b, ser, is_shindou)
                 f.write(ser.finish())

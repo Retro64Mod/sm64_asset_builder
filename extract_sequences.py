@@ -1,23 +1,19 @@
 import os
-from fs import open_fs
-import fs as _fs
 
 FS = None
 rom_file = open("baserom.us.z64", "rb")
 
-def main(fs=None):
-    if fs is None:
-        fs = open_fs('osfs://.')
+def main():
 
     def read_at(offset, size):
         rom_file.seek(int(offset))
         return rom_file.read(int(size))
 
-    if not fs.exists("sequences"):
-        fs.makedirs("sequences")
+    if not os.path.exists("sequences"):
+        os.makedirs("sequences")
 
     def extract_file(filename,offset,length):
-        with fs.open(_fs.path.join("sequences",filename), "wb") as file:
+        with open(os.path.join("sequences",filename), "wb") as file:
             file.write(read_at(offset,length))
 
     extract_file("00_sound_player.m64",8063360,13452)
