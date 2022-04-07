@@ -1,10 +1,9 @@
 import os
 
-FS = None
-rom_file = open("baserom.us.z64", "rb")
+
 
 def main():
-
+    rom_file = open("baserom.us.z64", "rb")
     def read_at(offset, size):
         rom_file.seek(int(offset))
         return rom_file.read(int(size))

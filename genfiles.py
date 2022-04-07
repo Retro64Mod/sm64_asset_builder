@@ -26,17 +26,25 @@ def pass4():
     amain()
 
 
-if __name__ == '__main__':
+def main(romData):
+    romDataB = bytes(romData)
+    with open("baserom.us.z64", 'wb') as f:
+        f.write(romDataB)
+
+    print("disassemble_sound")
     pass1()
+    print("assemble_sound 1")
     pass2()
+    print("extract_sequences")
     pass3()
+    print("assemble_sound 2")
     pass4()
-'''
+
+    finalData={}
     for file in ['sound_data.ctl', 'sound_data.tbl', 'bank_sets', 'sequences.bin']:
         print('writing ' + file + '...')
         with open(file, 'rb') as f:
             data = f.read()
-        with open(file, 'wb') as f:
-            f.write(data)
-
-'''
+            finalData[file]=data
+    return finalData
+    
