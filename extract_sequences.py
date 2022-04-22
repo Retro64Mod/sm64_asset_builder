@@ -1,11 +1,12 @@
 import os
 from fs import open_fs
 import fs as _fs
+import sys
 
 FS = None
-rom_file = open("baserom.us.z64", "rb")
 
 def main(fs=None):
+    rom_file = open(sys.argv[1], "rb")
     if fs is None:
         fs = open_fs('osfs://.')
 

@@ -6,3 +6,4 @@ bank_sets
 sequences.bin
 sound_data.*
 *.z64
+__pycache__/

@@ -3,12 +3,13 @@ from disassemble_sound import main as dmain
 from assemble_sound import main as amain
 from extract_sequences import main as emain
 from fs import open_fs
+rompath = sys.argv[1]
 
 FS = open_fs('mem://')
 
 
 def pass1():
-    sys.argv = [sys.argv[0], 'baserom.us.z64', '5748512', '97856', '5846368',
+    sys.argv = [sys.argv[0], rompath, '5748512', '97856', '5846368',
                 '2216704', 'samples', 'bank']
     dmain(FS)
 
@@ -21,6 +22,7 @@ def pass2():
 
 
 def pass3():
+    sys.argv=[sys.argv[0],rompath]
     emain(FS)
 
 
