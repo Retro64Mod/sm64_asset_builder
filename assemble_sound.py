@@ -790,7 +790,7 @@ def write_sequences(
     )
 
     try:
-        with open(seq_json, "r") as inf:
+        with FS.open(seq_json, "r") as inf:
             data = inf.read()
             data = strip_comments(data)
             json = orderedJsonDecoder.decode(data)
