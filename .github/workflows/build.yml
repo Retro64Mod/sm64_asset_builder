@@ -26,9 +26,9 @@ jobs:
       - uses: actions/checkout@v3
       # Runs a single command using the runners shell
       - name: Install requirements
-        run: pip install -r requirements.txt
+        run: pip3 install -r requirements.txt
       - name: Install Pyinstaller
-        run: pip install pyinstaller
+        run: pip3 install pyinstaller
       - name: Build
         run: pyinstaller --onefile genfiles.py
       - uses: actions/upload-artifact@v1
@@ -45,9 +45,9 @@ jobs:
       - uses: actions/checkout@v3
       # Runs a single command using the runners shell
       - name: Install requirements
-        run: pip install -r requirements.txt
+        run: pip3 install -r requirements.txt
       - name: Install Pyinstaller
-        run: pip install pyinstaller
+        run: pip3 install pyinstaller
       - name: Build
         run: pyinstaller --onefile genfiles.py
       - uses: actions/upload-artifact@v1
@@ -64,9 +64,9 @@ jobs:
       - uses: actions/checkout@v3
       # Runs a single command using the runners shell
       - name: Install requirements
-        run: pip install -r requirements.txt
+        run: pip3 install -r requirements.txt
       - name: Install Pyinstaller
-        run: pip install pyinstaller
+        run: pip3 install pyinstaller
       - name: Build
         run: pyinstaller --onefile genfiles.py
       - uses: actions/upload-artifact@v1
