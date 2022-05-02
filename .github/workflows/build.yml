@@ -55,7 +55,7 @@ jobs:
           python setup.py install
           cd ..
       - name: Build
-        run: pyinstaller --onefile genfiles.py
+        run: pyinstaller --onefile -i NONE genfiles.py
       - uses: actions/upload-artifact@v1
         with:
           name: genfiles-windows
