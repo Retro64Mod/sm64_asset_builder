@@ -47,6 +47,7 @@ jobs:
         run: pip3 install -r requirements.txt
       - name: Install Pyinstaller
         run: |
+          pip3 install wheel
           git clone https://github.com/pyinstaller/pyinstaller/
           cd pyinstaller/bootloader
           python ./waf all
