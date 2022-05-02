@@ -38,8 +38,6 @@ jobs:
   build-windows:
     # The type of runner that the job will run on
     runs-on: windows-latest
-    env:
-      PYINSTALLER_COMPILE_BOOTLOADER: 1
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -48,7 +46,13 @@ jobs:
       - name: Install requirements
         run: pip3 install -r requirements.txt
       - name: Install Pyinstaller
-        run: pip3 install pyinstaller
+        run: |
+          git clone https://github.com/pyinstaller/pyinstaller/
+          cd pyinstaller/bootloader
+          python ./waf all
+          cd ..
+          python setup.py install
+          cd ..
       - name: Build
         run: pyinstaller --onefile genfiles.py
       - uses: actions/upload-artifact@v1
